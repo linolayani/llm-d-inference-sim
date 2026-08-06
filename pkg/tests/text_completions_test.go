@@ -602,12 +602,12 @@ var _ = Describe("Simulator", func() {
 							"no token chunk should appear before the fail-fast error")
 					}
 				}
+
 				Expect(stream.Err()).To(HaveOccurred())
-				// TODO: check after fixing inconsistency in error responses in HTTP
-				// var oaiErr *openai.Error
-				// Expect(errors.As(stream.Err(), &oaiErr)).To(BeTrue())
-				// Expect(oaiErr.StatusCode).To(Equal(fasthttp.StatusTooManyRequests))
-				// Expect(oaiErr.Message).To(ContainSubstring("waiting requests queue is full"))
+				var oaiErr *openai.Error
+				Expect(errors.As(stream.Err(), &oaiErr)).To(BeTrue())
+				Expect(oaiErr.StatusCode).To(Equal(fasthttp.StatusTooManyRequests))
+				Expect(oaiErr.Message).To(ContainSubstring("waiting requests queue is full"))
 			} else {
 				_, err := openaiclient.Completions.New(ctx, params)
 				Expect(err).To(HaveOccurred())
